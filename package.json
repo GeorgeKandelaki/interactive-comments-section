@@ -1,0 +1,14 @@
+{
+	"name": "interactive-comments-section-main",
+	"version": "1.0.0",
+	"description": "![Design preview for the Interactive comments section coding challenge](./design/desktop-preview.jpg)",
+	"main": "index.js",
+	"scripts": {
+		"watch:sass": "sass sass/main.scss css/style.css -w"
+	},
+	"author": "George Kandelaki",
+	"license": "ISC",
+	"devDependencies": {
+		"sass": "^1.78.0"
+	}
+}
