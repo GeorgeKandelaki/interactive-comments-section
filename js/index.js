@@ -269,13 +269,11 @@ document.body.addEventListener("click", (e) => {
 	const { target } = e;
 
 	if (target.matches(".comment__like")) {
-		let liked = false;
 		const { curObj, curComm } = selectCurComm(target);
 		return likeDislikeComment(curObj, curComm.querySelector(".comment__score"), "like");
 	}
 
 	if (target.matches(".comment__dislike")) {
-		let disliked = false;
 		const { curObj, curComm } = selectCurComm(target);
 		return likeDislikeComment(curObj, curComm.querySelector(".comment__score"), "dislike");
 	}
