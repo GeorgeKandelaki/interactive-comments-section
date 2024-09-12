@@ -82,7 +82,7 @@ function createCommentTemplate(data) {
 		<div class="comment__content">
 			<div class="comment__likes-box">
 				<span class="comment__like">+</span>
-				<span class="comment__likes-quantity">${data.score}</span>
+				<span class="comment__score">${data.score}</span>
 				<span class="comment__dislike">-</span>
 			</div>
 		
@@ -216,6 +216,46 @@ function handleEdit(curComm, curObj, edit) {
 		? `<a class="comment__replying-to" href="#">@${curObj.replyingTo}</a>` + curObj.content
 		: curObj.content);
 }
+function likeDislikeComment(commObj, el, type) {
+	// If user has liked the comment and now clicks dislike
+	if (type === "dislike") {
+		// Check if the user had previously upvoted the post
+		if (curUser.likedPosts.includes(commObj.id)) {
+			commObj.score -= 2; // Remove upvote (-1) and apply dislike (-1)
+			curUser.likedPosts = curUser.likedPosts.filter((id) => id !== commObj.id); // Remove from liked posts
+			curUser.dislikedPosts.push(commObj.id); // Add to disliked posts
+		} else if (!curUser.dislikedPosts.includes(commObj.id)) {
+			// If user hasn't disliked it before
+			commObj.score--; // Apply dislike
+			curUser.dislikedPosts.push(commObj.id); // Track disliked post
+		} else {
+			// If user clicks dislike again (toggle off)
+			commObj.score++; // Remove the dislike
+			curUser.dislikedPosts = curUser.dislikedPosts.filter((id) => id !== commObj.id); // Remove from disliked posts
+		}
+	}
+
+	// If user has disliked the comment and now clicks like
+	if (type === "like") {
+		// Check if the user had previously downvoted the post
+		if (curUser.dislikedPosts.includes(commObj.id)) {
+			commObj.score += 2; // Remove dislike (+1) and apply like (+1)
+			curUser.dislikedPosts = curUser.dislikedPosts.filter((id) => id !== commObj.id); // Remove from disliked posts
+			curUser.likedPosts.push(commObj.id); // Add to liked posts
+		} else if (!curUser.likedPosts.includes(commObj.id)) {
+			// If user hasn't liked it before
+			commObj.score++; // Apply like
+			curUser.likedPosts.push(commObj.id); // Track liked post
+		} else {
+			// If user clicks like again (toggle off)
+			commObj.score--; // Remove the like
+			curUser.likedPosts = curUser.likedPosts.filter((id) => id !== commObj.id); // Remove from liked posts
+		}
+	}
+
+	// Update the score in the DOM
+	return (el.textContent = commObj.score);
+}
 
 btnCreateComm.addEventListener("click", (e) => {
 	if (inputComm.value.length < 1) return;
@@ -227,6 +267,18 @@ let curCommStats;
 document.body.addEventListener("click", (e) => {
 	e.preventDefault();
 	const { target } = e;
+
+	if (target.matches(".comment__like")) {
+		let liked = false;
+		const { curObj, curComm } = selectCurComm(target);
+		return likeDislikeComment(curObj, curComm.querySelector(".comment__score"), "like");
+	}
+
+	if (target.matches(".comment__dislike")) {
+		let disliked = false;
+		const { curObj, curComm } = selectCurComm(target);
+		return likeDislikeComment(curObj, curComm.querySelector(".comment__score"), "dislike");
+	}
 
 	if (target.classList.contains("comment__reply")) {
 		const { curComm, curObj, reply } = selectCurComm(target);
