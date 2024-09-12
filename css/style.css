@@ -78,7 +78,7 @@ body {
   font-size: 2rem;
   text-align: center;
 }
-.comment__likes-quantity {
+.comment__score {
   color: var(--color-blue-dark-1);
   font-weight: 500;
 }
